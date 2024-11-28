@@ -1,0 +1,36 @@
+Create database and table
+Embedding chunk (length 1481) from 'Vector Overview'
+Embedding chunk (length 1139) from 'Vector Overview'
+Embedding chunk (length 1015) from 'Vector Overview'
+Embedding chunk (length 1057) from 'What is MariaDB Galera Cluster?'
+Embedding chunk (length 1064) from 'What is MariaDB Galera Cluster?'
+Embedding chunk (length 1108) from 'SQL_MODE=ORACLE'
+Embedding chunk (length 1051) from 'SQL_MODE=ORACLE'
+Embedding chunk (length 1014) from 'SQL_MODE=ORACLE'
+Embedding chunk (length 1026) from 'SQL_MODE=ORACLE'
+Embedding chunk (length 1063) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1002) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1013) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1001) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1035) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1016) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1008) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1089) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Embedding chunk (length 1009) from 'Oracle XE 11.2. and MariaDB 10.1 integration on Ubuntu 14.04 and Debian systems'
+Prompting:
+'Can MariaDB be used instead of an Oracle database?'
+
+    LLM response with RAG:'
+    Yes, MariaDB can be used instead of an Oracle database, particularly for organizations looking to migrate from Oracle while preserving SQL syntax and behavior. From MariaDB 10.3 onward, setting `SQL_MODE=ORACLE` allows for compatibility with Oracle Database SQL syntax and behavior, which can ease the transition for existing applications and queries. Though there may be some differences in features and capabilities, many functionalities can be retained or adapted.
+
+For more information about using Oracle compatibility mode in MariaDB, you can refer to the following documentation: [SQL_MODE=ORACLE](https://mariadb.com/kb/en/sql-modeoracle/).'
+    
+
+    LLM response without RAG:
+    'Yes, MariaDB can be used as an alternative to Oracle Database in many scenarios. Both are relational database management systems (RDBMS), but there are some differences in features, licensing, performance, and compatibility. MariaDB is open-source and tends to be cost-effective, while Oracle Database provides extensive enterprise features and support.
+
+When considering switching from Oracle to MariaDB, it's essential to evaluate your specific requirements, such as scalability, performance, compliance, and the need for certain Oracle features that may not be present in MariaDB.
+
+For a more detailed comparison and guidance, you can refer to the official MariaDB documentation or resources that discuss migration paths and compatibility. 
+
+You can find more information here: [MariaDB vs Oracle](https://mariadb.com/resources/blog/mariadb-vs-oracle-the-ultimate-guide/)'
