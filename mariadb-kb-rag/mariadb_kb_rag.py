@@ -17,30 +17,7 @@ conn = mariadb.connect(
 cur = conn.cursor()
 
 
-def prepare_database():
-    print("Delete database")
-    cur.execute("""DROP DATABASE IF EXISTS kb_rag;""")
-
-    print("Create database and table")
-    cur.execute(
-        """
-        CREATE DATABASE IF NOT EXISTS kb_rag;
-        """
-    )
-    cur.execute(
-        """
-        CREATE TABLE kb_rag.content (
-            title VARCHAR(255) NOT NULL,
-            url VARCHAR(255) NOT NULL,
-            content LONGTEXT NOT NULL,
-            embedding VECTOR(1536) NOT NULL,
-            VECTOR INDEX (embedding)
-        ); 
-        """
-    )
-
-
-prepare_database()
+# prepare_database()
 
 
 def read_kb_from_file(filename):
@@ -76,40 +53,48 @@ def chunkify(content, min_chars=1000, max_chars=10000):
 
 
 def embed(text):
-    response = client.embeddings.create(
-        input=text,
-        model="text-embedding-3-small",  # max 8192 tokens (roughly 32k chars)
-    )
+    try:
+        response = client.embeddings.create(
+            input=text,
+            model="text-embedding-3-small",  # max 8192 tokens (roughly 32k chars)
+        )
+    except:
+        return None
     return response.data[0].embedding
 
 
 def insert_kb_into_db():
-    kb_pages = read_kb_from_file("kb_scraped_md_excerpt.jsonl") # alternatively kb_scraped_md_full.jsonl
+    kb_pages = read_kb_from_file("kb_scraped_md_full.jsonl") # alternatively kb_scraped_md_full.jsonl
     for p in kb_pages:
+        if ('meta' in p["url"]) or ('changelog' in p["url"]) or ('release-notes' in p["url"]) or ('.' in p["title"]) or ('InnoDB' in p["title"]) or ('S3' in p["title"]) or (p["title"][0] == ' ') or ('Amazon' in p["title"]) or ('Google' in p["title"]):
+            continue
         chunks = chunkify(p["content"])
         for chunk in chunks:
+            chunklength = len(chunk["content"])
+            p_title = p["title"]
             print(
-                f"Embedding chunk (length {len(chunk["content"])}) from '{p["title"]}'"
+                f"Embedding chunk (length {chunklength}) from '{p_title}'"
             )
             embedding = embed(chunk["content"])
-            cur.execute(
-                """INSERT INTO kb_rag.content (title, url, content, embedding)
+            if embedding:
+                cur.execute(
+                    """INSERT INTO kb_rag.kb_content (title, url, content, embedding)
                         VALUES (%s, %s, %s, VEC_FromText(%s))""",
-                (p["title"], p["url"], chunk["content"], str(embedding)),
-            )
+                    (p["title"], p["url"], chunk["content"], str(embedding)),
+                )
         conn.commit()
 
 
-insert_kb_into_db()
+# insert_kb_into_db()
 
 
-def search_for_closest_content(text, n):
+def search_for_closest_content(text, n, table="kb_content"):
     embedding = embed(text)  # using same embedding model as in preparations
     cur.execute(
-        """
+        f"""
         SELECT title, url, content, 
                VEC_DISTANCE_EUCLIDEAN(embedding, VEC_FromText(%s)) AS distance
-        FROM kb_rag.content
+        FROM kb_rag.{table}
         ORDER BY distance ASC
         LIMIT %s;
     """,
@@ -123,9 +108,9 @@ def search_for_closest_content(text, n):
     return closest_content
 
 
-user_input = "Can MariaDB be used instead of an Oracle database?"
+user_input = "How do I store compressed data using MariaDB?"
 print(f"Prompting:\n'{user_input}'")
-closest_content = search_for_closest_content(user_input, 5)
+closest_content = search_for_closest_content(user_input, 2)
 
 
 def prompt_chat(system_prompt, prompt):
@@ -148,6 +133,7 @@ prompt_with_rag = f"""
     Relevant content from the MariaDB Knowledge Base:
     '{str(closest_content)}'
     """
+print(prompt_with_rag)
 print(
     f"""
     LLM response with RAG:'
